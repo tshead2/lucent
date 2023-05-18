@@ -109,7 +109,7 @@ def render_vis(
                 loss = objective_f(hook)
                 loss.backward()
                 return loss
-                
+
             optimizer.step(closure)
             if i in thresholds:
                 image = tensor_to_img_array(image_f())

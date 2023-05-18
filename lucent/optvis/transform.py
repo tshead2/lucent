@@ -22,8 +22,8 @@ import numpy as np
 import kornia
 from kornia.geometry.transform import translate
 
+from lucent import context
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 KORNIA_VERSION = kornia.__version__
 
 
@@ -33,7 +33,7 @@ def jitter(d):
     def inner(image_t):
         dx = np.random.choice(d)
         dy = np.random.choice(d)
-        return translate(image_t, torch.tensor([[dx, dy]]).float().to(device))
+        return translate(image_t, torch.tensor([[dx, dy]]).float().to(context.device))
 
     return inner
 
@@ -76,7 +76,7 @@ def random_rotate(angles, units="degrees"):
         center = torch.ones(b, 2)
         center[..., 0] = (image_t.shape[3] - 1) / 2
         center[..., 1] = (image_t.shape[2] - 1) / 2
-        M = kornia.get_rotation_matrix2d(center, angle, scale).to(device)
+        M = kornia.get_rotation_matrix2d(center, angle, scale).to(context.device)
         rotated_image = kornia.warp_affine(image_t.float(), M, dsize=(h, w))
         return rotated_image
 

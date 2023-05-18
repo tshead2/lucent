@@ -41,8 +41,7 @@ def lowres_tensor(shape, underlying_shape, offset=None, sd=0.01):
     Returns:
         A tensor paramaterized by a lower resolution tensorflow variable.
     """
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    underlying_t = (torch.randn(*underlying_shape) * sd).to(device).requires_grad_(True)
+    underlying_t = (torch.randn(*underlying_shape) * sd).to(context.device).requires_grad_(True)
     if offset is not None:
         # Deal with non-list offset
         if not isinstance(offset, list):

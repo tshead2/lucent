@@ -18,14 +18,14 @@ from __future__ import absolute_import, division, print_function
 import torch
 import numpy as np
 
+from lucent import context
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 TORCH_VERSION = torch.__version__
 
 
 def pixel_image(shape, sd=None):
     sd = sd or 0.01
-    tensor = (torch.randn(*shape) * sd).to(device).requires_grad_(True)
+    tensor = (torch.randn(*shape) * sd).to(context.device).requires_grad_(True)
     return [tensor], lambda: tensor
 
 
@@ -48,10 +48,10 @@ def fft_image(shape, sd=None, decay_power=1):
     init_val_size = (batch, channels) + freqs.shape + (2,) # 2 for imaginary and real components
     sd = sd or 0.01
 
-    spectrum_real_imag_t = (torch.randn(*init_val_size) * sd).to(device).requires_grad_(True)
+    spectrum_real_imag_t = (torch.randn(*init_val_size) * sd).to(context.device).requires_grad_(True)
 
     scale = 1.0 / np.maximum(freqs, 1.0 / max(w, h)) ** decay_power
-    scale = torch.tensor(scale).float()[None, None, ..., None].to(device)
+    scale = torch.tensor(scale).float()[None, None, ..., None].to(context.device)
 
     def inner():
         scaled_spectrum_t = scale * spectrum_real_imag_t
