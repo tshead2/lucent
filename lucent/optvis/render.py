@@ -81,7 +81,7 @@ def render_vis(
 
     transform_f = transform.compose(transforms)
 
-    hook = hook_model(model, image_f)
+    hook, features = hook_model(model, image_f, return_hooks=True)
     objective_f = objectives.as_objective(objective_f)
 
     if verbose:
@@ -123,6 +123,10 @@ def render_vis(
         if verbose:
             print("Loss at step {}: {:.3f}".format(i, objective_f(hook)))
         images.append(tensor_to_img_array(image_f()))
+
+    # Clear hooks
+    for module_hook in features.values():
+        del module_hook.module._forward_hooks[module_hook.hook.id]
 
     if save_image:
         export(image_f(), image_name)
@@ -182,10 +186,11 @@ class ModuleHook:
         self.features = output
 
     def close(self):
+        # This doesn't actually do anything
         self.hook.remove()
 
 
-def hook_model(model, image_f):
+def hook_model(model, image_f, return_hooks=False):
     features = OrderedDict()
 
     # recursive hooking function
@@ -211,4 +216,6 @@ def hook_model(model, image_f):
         assert out is not None, "There are no saved feature maps. Make sure to put the model in eval mode, like so: `model.to(device).eval()`. See README for example."
         return out
 
+    if return_hooks:
+        return hook, features
     return hook
