@@ -81,7 +81,7 @@ def render_vis(
 
     transform_f = transform.compose(transforms)
 
-    hook, features = hook_model(model, image_f)
+    hook, features = hook_model(model, image_f, return_hooks=True)
     objective_f = objectives.as_objective(objective_f)
 
     if verbose:
@@ -190,7 +190,7 @@ class ModuleHook:
         self.hook.remove()
 
 
-def hook_model(model, image_f):
+def hook_model(model, image_f, return_hooks=False):
     features = OrderedDict()
 
     # recursive hooking function
@@ -216,4 +216,6 @@ def hook_model(model, image_f):
         assert out is not None, "There are no saved feature maps. Make sure to put the model in eval mode, like so: `model.to(device).eval()`. See README for example."
         return out
 
-    return hook, features
+    if return_hooks:
+        return hook, features
+    return hook
