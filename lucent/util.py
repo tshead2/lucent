@@ -22,6 +22,9 @@ import torch
 import random
 
 
+DEFAULT_DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
 def set_seed(seed):
     # Set global seeds to for reproducibility
     torch.manual_seed(seed)

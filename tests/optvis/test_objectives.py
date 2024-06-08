@@ -18,18 +18,17 @@ from __future__ import absolute_import, division, print_function
 import pytest
 
 import torch
-import random
-import numpy as np
 from lucent.util import set_seed
 from lucent.optvis import objectives, param, render
 from lucent.modelzoo import inceptionv1
+from lucent.util import DEFAULT_DEVICE
 
 
 set_seed(137)
 
 
 NUM_STEPS = 5
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device(DEFAULT_DEVICE)
 
 @pytest.fixture
 def inceptionv1_model():
